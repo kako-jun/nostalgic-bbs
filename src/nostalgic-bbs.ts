@@ -1,70 +1,96 @@
 "use strict";
 import _ from "lodash";
+import moment from "moment";
+
+interface Threads {
+  thread_IDs: Array<number>;
+}
+
+interface Thread {
+  id: number;
+  title: string;
+  comments: Array<AdminComment>;
+}
+
+interface AdminComment {
+  id: number;
+  dt: string;
+  name: string;
+  text: string;
+  host: string;
+  info: string;
+  visible: boolean;
+}
+
+interface Comment {
+  id: number;
+  dt: string;
+  name: string;
+  text: string;
+}
+
+interface ThreadForUI {
+  id: number;
+  title: string;
+  comments: Array<AdminComment>;
+  invisible_num: number;
+}
 
 interface Option {
-  format: string;
-  zero_padding_length: number;
-  image_dir_path: string;
-  image_ext: string;
-  normal_messages: Array<NormalMessage>;
-  special_messages: Array<SpecialMessage>;
-  no_kiriban_message: string;
-  no_more_kiriban_message: string;
-  next_kiriban_message_left: string;
-  next_kiriban_message_right: string;
+  pre_format: string;
+  thread_format: string;
+  comment_format: string;
+  delimiter_format: string;
+  post_format: string;
+  dt_format: string;
 }
 
-interface NormalMessage {
-  step: number;
-  message: string;
-}
-
-interface SpecialMessage {
-  count: number;
-  message: string;
-}
-
-class NostalgicCounter {
-  constructor(url: string) {
+class NostalgicBBS {
+  constructor() {
     // instance variables
   }
 
-  public static async createCounter(url: string) {
+  public static async getBBS(url: string) {
     const res = await fetch(url, {
       mode: "cors"
     }).catch(() => null);
     if (res) {
-      const counter = await res.json();
-      if (counter && counter.total !== undefined) {
-        return counter;
+      const json = await res.json();
+      if (json) {
+        return json;
       }
     }
 
     return null;
   }
 
-  public static showCounter(id: string, count: number, option: Option): void {
-    let format = "{count}";
-    if (option && option.format) {
-      format = option.format;
+  public static showThreads(id: string, threads: Array<ThreadForUI>, option: Option): void {
+    let pre_format = "<ul>";
+    if (option && option.pre_format) {
+      pre_format = option.pre_format;
     }
 
-    let zero_padding_length = 0;
-    if (option && option.zero_padding_length) {
-      zero_padding_length = option.zero_padding_length;
+    let thread_format = "<li>{id} {title} {comments_num} {invisible_num} {created_at} {updated_at}</li>";
+    if (option && option.thread_format) {
+      thread_format = option.thread_format;
     }
 
-    let image_dir_path = "";
-    if (option && option.image_dir_path) {
-      image_dir_path = option.image_dir_path;
+    let delimiter_format = "";
+    if (option && option.delimiter_format) {
+      delimiter_format = option.delimiter_format;
     }
 
-    let image_ext = ".gif";
-    if (option && option.image_ext) {
-      image_ext = option.image_ext;
+    let post_format = "</ul>";
+    if (option && option.post_format) {
+      post_format = option.post_format;
     }
 
-    let html = this.generateCounterHTML(count, format, zero_padding_length, image_dir_path, image_ext);
+    let dt_format = "YYYY/MM/DD HH:mm:ss";
+    if (option && option.dt_format) {
+      dt_format = option.dt_format;
+    }
+
+    let html = this.generateThreadsHTML(threads, pre_format, thread_format, delimiter_format, post_format, dt_format);
 
     const counterElement = document.getElementById(id);
     if (counterElement) {
@@ -72,170 +98,178 @@ class NostalgicCounter {
     }
   }
 
-  public static showKiriban(id: string, count: number, option: Option): void {
-    let normal_messages: Array<NormalMessage> = [];
-    if (option && option.normal_messages) {
-      normal_messages = option.normal_messages;
+  public static showThread(id: string, threads: Array<ThreadForUI>, threadID: number, option: Option): void {
+    let thread_format = "{id} {title} {comments_num} {invisible_num} {created_at} {updated_at}";
+    if (option && option.thread_format) {
+      thread_format = option.thread_format;
     }
 
-    let special_messages: Array<SpecialMessage> = [];
-    if (option && option.special_messages) {
-      special_messages = option.special_messages;
+    let pre_format = "<ul>";
+    if (option && option.pre_format) {
+      pre_format = option.pre_format;
     }
 
-    let no_kiriban_message = "";
-    if (option && option.no_kiriban_message) {
-      no_kiriban_message = option.no_kiriban_message;
+    let comment_format = "<li>{id} {name} {dt}<p>{text}</p></li>";
+    if (option && option.comment_format) {
+      comment_format = option.comment_format;
     }
 
-    let no_more_kiriban_message = "";
-    if (option && option.no_more_kiriban_message) {
-      no_more_kiriban_message = option.no_more_kiriban_message;
+    let delimiter_format = "";
+    if (option && option.delimiter_format) {
+      delimiter_format = option.delimiter_format;
     }
 
-    let next_kiriban_message_left = "";
-    if (option && option.next_kiriban_message_left) {
-      next_kiriban_message_left = option.next_kiriban_message_left;
+    let post_format = "</ul>";
+    if (option && option.post_format) {
+      post_format = option.post_format;
     }
 
-    let next_kiriban_message_right = "";
-    if (option && option.next_kiriban_message_right) {
-      next_kiriban_message_right = option.next_kiriban_message_right;
+    let dt_format = "YYYY/MM/DD HH:mm:ss";
+    if (option && option.dt_format) {
+      dt_format = option.dt_format;
     }
 
+    const thread = _.find(threads, thread => {
+      return thread.id === threadID;
+    });
+
+    if (thread) {
+      let html = this.generateThreadHTML(
+        thread,
+        thread_format,
+        pre_format,
+        comment_format,
+        delimiter_format,
+        post_format,
+        dt_format
+      );
+
+      const counterElement = document.getElementById(id);
+      if (counterElement) {
+        counterElement.innerHTML = html;
+      }
+    }
+  }
+
+  private static generateThreadsHTML(
+    threads: Array<ThreadForUI>,
+    pre_format: string,
+    thread_format: string,
+    delimiter_format: string,
+    post_format: string,
+    dt_format: string
+  ): string {
     let html = "";
-    if (normal_messages || special_messages) {
-      html = this.generateKiribanHTML(
-        count,
-        normal_messages,
-        special_messages,
-        no_kiriban_message,
-        no_more_kiriban_message,
-        next_kiriban_message_left,
-        next_kiriban_message_right
+
+    html += pre_format;
+
+    _.forEach(threads, thread => {
+      let threadHTML = thread_format;
+      threadHTML = this.formatThreadHTML(threadHTML, thread, dt_format);
+
+      html += '<span class="nostalgic-bbs-thread">' + threadHTML + "</span>";
+      html += delimiter_format;
+    });
+
+    html = '<span class="nostalgic-bbs-threads">' + html + "</span>";
+    html += post_format;
+    html = '<span class="nostalgic-bbs">' + html + "</span>";
+
+    return html;
+  }
+
+  private static generateThreadHTML(
+    thread: ThreadForUI,
+    thread_format: string,
+    pre_format: string,
+    comment_format: string,
+    delimiter_format: string,
+    post_format: string,
+    dt_format: string
+  ): string {
+    let html = "";
+
+    let threadHTML = thread_format;
+    threadHTML = this.formatThreadHTML(threadHTML, thread, dt_format);
+    html += threadHTML;
+
+    html += pre_format;
+
+    _.forEach(thread.comments, comment => {
+      let commentHTML = comment_format;
+      commentHTML = this.formatCommentHTML(commentHTML, comment, dt_format);
+
+      html += '<span class="nostalgic-bbs-comment">' + commentHTML + "</span>";
+      html += delimiter_format;
+    });
+
+    html = '<span class="nostalgic-bbs-comments">' + html + "</span>";
+    html += post_format;
+    html = '<span class="nostalgic-bbs">' + html + "</span>";
+
+    return html;
+  }
+
+  private static formatThreadHTML(srcHTML: string, thread: ThreadForUI, dt_format: string): string {
+    let dstHTML = srcHTML;
+
+    dstHTML = dstHTML.replace("{id}", '<span class="nostalgic-bbs-thread-id">' + thread.id + "</span>");
+    dstHTML = dstHTML.replace("{title}", '<span class="nostalgic-bbs-thread-title">' + thread.title + "</span>");
+    dstHTML = dstHTML.replace(
+      "{comments_num}",
+      '<span class="nostalgic-bbs-thread-comments-num">' + thread.comments.length + "</span>"
+    );
+    dstHTML = dstHTML.replace(
+      "{invisible_num}",
+      '<span class="nostalgic-bbs-thread-invisible-num">' + thread.invisible_num + "</span>"
+    );
+
+    if (thread.comments.length > 0) {
+      const dt = new Date(thread.comments[0].dt);
+      dstHTML = dstHTML.replace(
+        "{created_at}",
+        '<span class="nostalgic-bbs-thread-created-at">' + moment(dt.toISOString()).format(dt_format) + "</span>"
       );
     }
 
-    const counterElement = document.getElementById(id);
-    if (counterElement) {
-      counterElement.innerHTML = html;
+    if (thread.comments.length > 0) {
+      const dt = new Date(thread.comments[thread.comments.length - 1].dt);
+      dstHTML = dstHTML.replace(
+        "{updated_at}",
+        '<span class="nostalgic-bbs-thread-updated-at">' + moment(dt.toISOString()).format(dt_format) + "</span>"
+      );
     }
+
+    return dstHTML;
   }
 
-  private static zeroPadding(num: number, length: number): string {
-    if (String(num).length < length) {
-      return ("0000000000" + num).slice(-length);
-    }
+  private static formatCommentHTML(srcHTML: string, comment: Comment, dt_format: string): string {
+    let dstHTML = srcHTML;
 
-    return String(num);
-  }
+    dstHTML = dstHTML.replace("{id}", '<span class="nostalgic-bbs-comment-id">' + comment.id + "</span>");
+    dstHTML = dstHTML.replace("{name}", '<span class="nostalgic-bbs-comment-name">' + comment.name + "</span>");
+    dstHTML = dstHTML.replace("{text}", '<span class="nostalgic-bbs-comment-text">' + comment.text + "</span>");
 
-  private static convertNumbersToImagePaths(countString: string, dirPath: string, ext: string): Array<string> {
-    const splited = String(countString).split("");
-    return _.map(splited, n => {
-      return dirPath + "/" + n + ext;
-    });
-  }
+    const dt = new Date(comment.dt);
+    dstHTML = dstHTML.replace(
+      "{dt}",
+      '<span class="nostalgic-bbs-comment-dt">' + moment(dt.toISOString()).format(dt_format) + "</span>"
+    );
 
-  private static generateCounterHTML(
-    count: number,
-    format: string,
-    zero_padding_length: number,
-    image_dir_path: string,
-    image_ext: string
-  ): string {
-    let html = format;
-    let countHTML = this.zeroPadding(count, zero_padding_length);
-
-    if (image_dir_path !== "") {
-      const imagePaths = this.convertNumbersToImagePaths(countHTML, image_dir_path, image_ext);
-
-      countHTML = _.map(imagePaths, p => {
-        return '<img src="' + p + '"></img>';
-      }).join("");
-    }
-
-    html = html.replace("{count}", countHTML);
-
-    return html;
-  }
-
-  private static generateKiribanHTML(
-    count: number,
-    normal_messages: Array<NormalMessage>,
-    special_messages: Array<SpecialMessage>,
-    no_kiriban_message: string,
-    no_more_kiriban_message: string,
-    next_kiriban_message_left: string,
-    next_kiriban_message_right: string
-  ): string {
-    let html = "";
-
-    let normalFound = _.find(normal_messages, m => {
-      return count % m.step === 0;
-    });
-    if (normalFound) {
-      html += normalFound.message;
-    }
-
-    let specialFound = _.find(special_messages, m => {
-      return count === m.count;
-    });
-    if (specialFound) {
-      html += specialFound.message;
-    }
-
-    if (!normalFound && !specialFound) {
-      html += no_kiriban_message;
-    }
-
-    let next = Number.MAX_VALUE;
-    if (next_kiriban_message_left !== "" || next_kiriban_message_right !== "") {
-      let normalNext = Number.MAX_VALUE;
-      normalFound = _.minBy(normal_messages, "step");
-      if (normalFound) {
-        const minStep = normalFound.step;
-        normalNext = count + minStep - (count % minStep);
-      }
-
-      let specialNext = Number.MAX_VALUE;
-      specialFound = _.find(special_messages, m => {
-        return count < m.count;
-      });
-      if (specialFound) {
-        specialNext = specialFound.count;
-      }
-
-      const found = _.min([normalNext, specialNext]);
-      if (found) {
-        next = found;
-      }
-    }
-
-    if (next === Number.MAX_VALUE) {
-      html += no_more_kiriban_message;
-    } else {
-      html += next_kiriban_message_left;
-      html += next;
-      html += next_kiriban_message_right;
-    }
-
-    html = html.replace("{count}", String(count));
-
-    return html;
+    return dstHTML;
   }
 }
 
-export async function createCounter(url: string) {
-  return await NostalgicCounter.createCounter(url);
+export async function getBBS(url: string) {
+  return await NostalgicBBS.getBBS(url);
 }
 
-export function showCounter(id: string, count: number, option: Option): void {
-  NostalgicCounter.showCounter(id, count, option);
+export function showThreads(id: string, threads: Array<ThreadForUI>, option: Option): void {
+  NostalgicBBS.showThreads(id, threads, option);
 }
 
-export function showKiriban(id: string, count: number, option: Option): void {
-  NostalgicCounter.showKiriban(id, count, option);
+export function showThread(id: string, threads: Array<ThreadForUI>, threadID: number, option: Option): void {
+  NostalgicBBS.showThread(id, threads, threadID, option);
 }
 
-export default NostalgicCounter;
+export default NostalgicBBS;
