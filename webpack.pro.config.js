@@ -1,5 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 /*
  * SplitChunksPlugin is enabled by default and replaced
@@ -27,7 +28,7 @@ const webpack = require("webpack");
 
 module.exports = {
   mode: "production",
-  entry: "./src/nostalgic-bbs.ts",
+  entry: "./src/nostalgic-bbs.scss",
 
   output: {
     filename: "nostalgic-bbs.min.js",
@@ -37,7 +38,12 @@ module.exports = {
   },
 
   //   plugins: [new webpack.ProgressPlugin(), new HtmlWebpackPlugin()],
-  plugins: [new webpack.ProgressPlugin()],
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new MiniCssExtractPlugin({
+      filename: "nostalgic-bbs.min.css"
+    })
+  ],
 
   module: {
     rules: [
@@ -46,6 +52,10 @@ module.exports = {
         loader: "ts-loader",
         include: [path.resolve(__dirname, "src")],
         exclude: [/node_modules/]
+      },
+      {
+        test: /\.(sa|sc|c)ss$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
       }
     ]
   },

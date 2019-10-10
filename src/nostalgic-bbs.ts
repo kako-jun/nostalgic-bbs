@@ -65,12 +65,13 @@ class NostalgicBBS {
   }
 
   public static showThreads(id: string, threads: Array<ThreadForUI>, option: Option): void {
-    let pre_format = "<ul>";
+    let pre_format = '<ul class="nostalgic-bbs-threads">';
     if (option && option.pre_format) {
       pre_format = option.pre_format;
     }
 
-    let thread_format = "<li>{id} {title} {comments_num} {invisible_num} {created_at} {updated_at}</li>";
+    let thread_format =
+      '<li class="nostalgic-bbs-thread"><a href="#thread-{id_without_class}">{id}: {title} ({comments_num})</a></li>';
     if (option && option.thread_format) {
       thread_format = option.thread_format;
     }
@@ -99,17 +100,17 @@ class NostalgicBBS {
   }
 
   public static showThread(id: string, threads: Array<ThreadForUI>, threadID: number, option: Option): void {
-    let thread_format = "{id} {title} {comments_num} {invisible_num} {created_at} {updated_at}";
+    let thread_format = '<h1 id="thread-{id_without_class}" class="nostalgic-bbs-thread">{title}</h1>';
     if (option && option.thread_format) {
       thread_format = option.thread_format;
     }
 
-    let pre_format = "<ul>";
+    let pre_format = '<ul class="nostalgic-bbs-comments">';
     if (option && option.pre_format) {
       pre_format = option.pre_format;
     }
 
-    let comment_format = "<li>{id} {name} {dt}<p>{text}</p></li>";
+    let comment_format = '<li class="nostalgic-bbs-comment">{id} {name} {dt}<p class="text">{text}</p></li>';
     if (option && option.comment_format) {
       comment_format = option.comment_format;
     }
@@ -151,6 +152,8 @@ class NostalgicBBS {
     }
   }
 
+  public static showForm(id: string, previewID: string, threadID: number, option: Option): void {}
+
   private static generateThreadsHTML(
     threads: Array<ThreadForUI>,
     pre_format: string,
@@ -166,14 +169,13 @@ class NostalgicBBS {
     _.forEach(threads, thread => {
       let threadHTML = thread_format;
       threadHTML = this.formatThreadHTML(threadHTML, thread, dt_format);
+      html += threadHTML;
 
-      html += '<span class="nostalgic-bbs-thread">' + threadHTML + "</span>";
       html += delimiter_format;
     });
 
-    html = '<span class="nostalgic-bbs-threads">' + html + "</span>";
     html += post_format;
-    html = '<span class="nostalgic-bbs">' + html + "</span>";
+    html = '<div class="nostalgic-bbs">' + html + "</div>";
 
     return html;
   }
@@ -198,14 +200,13 @@ class NostalgicBBS {
     _.forEach(thread.comments, comment => {
       let commentHTML = comment_format;
       commentHTML = this.formatCommentHTML(commentHTML, comment, dt_format);
+      html += commentHTML;
 
-      html += '<span class="nostalgic-bbs-comment">' + commentHTML + "</span>";
       html += delimiter_format;
     });
 
-    html = '<span class="nostalgic-bbs-comments">' + html + "</span>";
     html += post_format;
-    html = '<span class="nostalgic-bbs">' + html + "</span>";
+    html = '<div class="nostalgic-bbs">' + html + "</div>";
 
     return html;
   }
@@ -213,21 +214,23 @@ class NostalgicBBS {
   private static formatThreadHTML(srcHTML: string, thread: ThreadForUI, dt_format: string): string {
     let dstHTML = srcHTML;
 
-    dstHTML = dstHTML.replace("{id}", '<span class="nostalgic-bbs-thread-id">' + thread.id + "</span>");
-    dstHTML = dstHTML.replace("{title}", '<span class="nostalgic-bbs-thread-title">' + thread.title + "</span>");
+    dstHTML = dstHTML.replace(/{id}/g, '<span class="nostalgic-bbs-thread-id">' + thread.id + "</span>");
+    dstHTML = dstHTML.replace(/{id_without_class}/g, String(thread.id));
+    dstHTML = dstHTML.replace(/{title}/g, '<span class="nostalgic-bbs-thread-title">' + thread.title + "</span>");
+    dstHTML = dstHTML.replace(/{title_without_class}/g, String(thread.title));
     dstHTML = dstHTML.replace(
-      "{comments_num}",
+      /{comments_num}/g,
       '<span class="nostalgic-bbs-thread-comments-num">' + thread.comments.length + "</span>"
     );
     dstHTML = dstHTML.replace(
-      "{invisible_num}",
+      /{invisible_num}/g,
       '<span class="nostalgic-bbs-thread-invisible-num">' + thread.invisible_num + "</span>"
     );
 
     if (thread.comments.length > 0) {
       const dt = new Date(thread.comments[0].dt);
       dstHTML = dstHTML.replace(
-        "{created_at}",
+        /{created_at}/g,
         '<span class="nostalgic-bbs-thread-created-at">' + moment(dt.toISOString()).format(dt_format) + "</span>"
       );
     }
@@ -235,7 +238,7 @@ class NostalgicBBS {
     if (thread.comments.length > 0) {
       const dt = new Date(thread.comments[thread.comments.length - 1].dt);
       dstHTML = dstHTML.replace(
-        "{updated_at}",
+        /{updated_at}/g,
         '<span class="nostalgic-bbs-thread-updated-at">' + moment(dt.toISOString()).format(dt_format) + "</span>"
       );
     }
@@ -246,13 +249,13 @@ class NostalgicBBS {
   private static formatCommentHTML(srcHTML: string, comment: Comment, dt_format: string): string {
     let dstHTML = srcHTML;
 
-    dstHTML = dstHTML.replace("{id}", '<span class="nostalgic-bbs-comment-id">' + comment.id + "</span>");
-    dstHTML = dstHTML.replace("{name}", '<span class="nostalgic-bbs-comment-name">' + comment.name + "</span>");
-    dstHTML = dstHTML.replace("{text}", '<span class="nostalgic-bbs-comment-text">' + comment.text + "</span>");
+    dstHTML = dstHTML.replace(/{id}/g, '<span class="nostalgic-bbs-comment-id">' + comment.id + "</span>");
+    dstHTML = dstHTML.replace(/{name}/g, '<span class="nostalgic-bbs-comment-name">' + comment.name + "</span>");
+    dstHTML = dstHTML.replace(/{text}/g, '<span class="nostalgic-bbs-comment-text">' + comment.text + "</span>");
 
     const dt = new Date(comment.dt);
     dstHTML = dstHTML.replace(
-      "{dt}",
+      /{dt}/g,
       '<span class="nostalgic-bbs-comment-dt">' + moment(dt.toISOString()).format(dt_format) + "</span>"
     );
 
@@ -270,6 +273,10 @@ export function showThreads(id: string, threads: Array<ThreadForUI>, option: Opt
 
 export function showThread(id: string, threads: Array<ThreadForUI>, threadID: number, option: Option): void {
   NostalgicBBS.showThread(id, threads, threadID, option);
+}
+
+export function showForm(id: string, previewID: string, threadID: number, option: Option): void {
+  NostalgicBBS.showForm(id, previewID, threadID, option);
 }
 
 export default NostalgicBBS;
