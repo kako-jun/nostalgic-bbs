@@ -16,6 +16,7 @@ interface AdminComment {
   id: number;
   dt: string;
   name: string;
+  trip: string;
   text: string;
   host: string;
   info: string;
@@ -26,6 +27,7 @@ interface Comment {
   id: number;
   dt: string;
   name: string;
+  trip: string;
   text: string;
 }
 
@@ -46,6 +48,7 @@ interface Option {
   dt_format: string;
   sort_by: string;
   sort_order: string;
+  auto_link: boolean;
   title_label: string;
   title_placeholder: string;
   name_label: string;
@@ -91,38 +94,38 @@ class NostalgicBBS {
 
   public static showThreads(targetID: string, threads: Array<ThreadForUI>, option: Option): void {
     let pre_format = "<ul>";
-    if (option && option.pre_format) {
+    if (option && option.pre_format !== undefined) {
       pre_format = option.pre_format;
     }
 
     let thread_format =
       '<li class="nb-threads-thread"><a href="#thread-{id_without_class}">{id}: {title} ({comments_num})</a></li>';
-    if (option && option.thread_format) {
+    if (option && option.thread_format !== undefined) {
       thread_format = option.thread_format;
     }
 
     let delimiter_format = "";
-    if (option && option.delimiter_format) {
+    if (option && option.delimiter_format !== undefined) {
       delimiter_format = option.delimiter_format;
     }
 
     let post_format = "</ul>";
-    if (option && option.post_format) {
+    if (option && option.post_format !== undefined) {
       post_format = option.post_format;
     }
 
     let dt_format = "YYYY/MM/DD HH:mm:ss";
-    if (option && option.dt_format) {
+    if (option && option.dt_format !== undefined) {
       dt_format = option.dt_format;
     }
 
     let sort_by = "id";
-    if (option && option.sort_by) {
+    if (option && option.sort_by !== undefined) {
       sort_by = option.sort_by;
     }
 
     let sort_order = "asc";
-    if (option && option.sort_order) {
+    if (option && option.sort_order !== undefined) {
       sort_order = option.sort_order;
     }
 
@@ -145,22 +148,22 @@ class NostalgicBBS {
 
   public static showThread(targetID: string, thread: ThreadForUI, option: Option): void {
     let pre_format = "";
-    if (option && option.pre_format) {
+    if (option && option.pre_format !== undefined) {
       pre_format = option.pre_format;
     }
 
     let thread_format = '<h1 id="thread-{id_without_class}">{title}</h1>';
-    if (option && option.thread_format) {
+    if (option && option.thread_format !== undefined) {
       thread_format = option.thread_format;
     }
 
     let post_format = "";
-    if (option && option.post_format) {
+    if (option && option.post_format !== undefined) {
       post_format = option.post_format;
     }
 
     let dt_format = "YYYY/MM/DD HH:mm:ss";
-    if (option && option.dt_format) {
+    if (option && option.dt_format !== undefined) {
       dt_format = option.dt_format;
     }
 
@@ -189,38 +192,43 @@ class NostalgicBBS {
 
   public static showComments(targetID: string, thread: ThreadForUI, option: Option): void {
     let pre_format = "<ul>";
-    if (option && option.pre_format) {
+    if (option && option.pre_format !== undefined) {
       pre_format = option.pre_format;
     }
 
-    let comment_format = '<li class="nb-comment">{id} {name} {dt}<p class="text">{text}</p></li>';
-    if (option && option.comment_format) {
+    let comment_format = '<li class="nb-comment">{id}{name}{dt}ID:{trip}<p class="text">{text}</p></li>';
+    if (option && option.comment_format !== undefined) {
       comment_format = option.comment_format;
     }
 
     let delimiter_format = "";
-    if (option && option.delimiter_format) {
+    if (option && option.delimiter_format !== undefined) {
       delimiter_format = option.delimiter_format;
     }
 
     let post_format = "</ul>";
-    if (option && option.post_format) {
+    if (option && option.post_format !== undefined) {
       post_format = option.post_format;
     }
 
     let dt_format = "YYYY/MM/DD HH:mm:ss";
-    if (option && option.dt_format) {
+    if (option && option.dt_format !== undefined) {
       dt_format = option.dt_format;
     }
 
     let sort_by = "id";
-    if (option && option.sort_by) {
+    if (option && option.sort_by !== undefined) {
       sort_by = option.sort_by;
     }
 
     let sort_order = "asc";
-    if (option && option.sort_order) {
+    if (option && option.sort_order !== undefined) {
       sort_order = option.sort_order;
+    }
+
+    let auto_link = false;
+    if (option && option.auto_link !== undefined) {
+      auto_link = option.auto_link;
     }
 
     let html = this.generateCommentsHTML(
@@ -231,7 +239,8 @@ class NostalgicBBS {
       post_format,
       dt_format,
       sort_by,
-      sort_order
+      sort_order,
+      auto_link
     );
 
     const targetElement = document.getElementById(targetID);
@@ -263,32 +272,32 @@ class NostalgicBBS {
     threadsOption: Option
   ): void {
     let pre_format = "";
-    if (formOption && formOption.pre_format) {
+    if (formOption && formOption.pre_format !== undefined) {
       pre_format = formOption.pre_format;
     }
 
     let form_format = '<div>{title}</div><div class="right">{post_button}</div>';
-    if (formOption && formOption.form_format) {
+    if (formOption && formOption.form_format !== undefined) {
       form_format = formOption.form_format;
     }
 
     let post_format = "";
-    if (formOption && formOption.post_format) {
+    if (formOption && formOption.post_format !== undefined) {
       post_format = formOption.post_format;
     }
 
     let title_label = "";
-    if (formOption && formOption.title_label) {
+    if (formOption && formOption.title_label !== undefined) {
       title_label = formOption.title_label;
     }
 
     let title_placeholder = "Title";
-    if (formOption && formOption.title_placeholder) {
+    if (formOption && formOption.title_placeholder !== undefined) {
       title_placeholder = formOption.title_placeholder;
     }
 
     let post_button_text = "Post";
-    if (formOption && formOption.post_button_text) {
+    if (formOption && formOption.post_button_text !== undefined) {
       post_button_text = formOption.post_button_text;
     }
 
@@ -304,6 +313,20 @@ class NostalgicBBS {
     const targetElement = document.getElementById(targetID);
     if (targetElement) {
       targetElement.innerHTML = html;
+
+      const escapeHTML = (src: string) => {
+        return src.replace(/[<>&"'`]/g, match => {
+          const escape: any = {
+            "<": "&lt;",
+            ">": "&gt;",
+            "&": "&amp;",
+            '"': "&quot;",
+            "'": "&#39;",
+            "`": "&#x60;"
+          };
+          return escape[match];
+        });
+      };
 
       const addClickEventListener = (type: string) => {
         let command = "";
@@ -328,7 +351,8 @@ class NostalgicBBS {
             const titleElements = targetElement.getElementsByClassName("nb-form-title");
             if (titleElements.length > 0) {
               const titleElement: any = titleElements[0];
-              title = encodeURIComponent(titleElement.value);
+              const value = (titleElement.value as string) || "";
+              title = encodeURIComponent(escapeHTML(value.trim()));
             }
 
             const res = await fetch(url + "/threads/" + command + "?title=" + title, {
@@ -336,7 +360,7 @@ class NostalgicBBS {
             }).catch(() => null);
             if (res) {
               const json = await res.json();
-              console.log(json);
+              // console.log(json);
               if (json && !json.error) {
                 this.showThreads(updateTargetID, json, threadsOption);
               }
@@ -358,47 +382,47 @@ class NostalgicBBS {
     commentsOption: Option
   ): void {
     let pre_format = "";
-    if (formOption && formOption.pre_format) {
+    if (formOption && formOption.pre_format !== undefined) {
       pre_format = formOption.pre_format;
     }
 
     let form_format = '<div>{name}</div><div>{text}</div><div class="right">{post_button}</div>';
-    if (formOption && formOption.form_format) {
+    if (formOption && formOption.form_format !== undefined) {
       form_format = formOption.form_format;
     }
 
     let post_format = "";
-    if (formOption && formOption.post_format) {
+    if (formOption && formOption.post_format !== undefined) {
       post_format = formOption.post_format;
     }
 
     let name_label = "";
-    if (formOption && formOption.name_label) {
+    if (formOption && formOption.name_label !== undefined) {
       name_label = formOption.name_label;
     }
 
     let name_placeholder = "Name";
-    if (formOption && formOption.name_placeholder) {
+    if (formOption && formOption.name_placeholder !== undefined) {
       name_placeholder = formOption.name_placeholder;
     }
 
     let text_label = "";
-    if (formOption && formOption.text_label) {
+    if (formOption && formOption.text_label !== undefined) {
       text_label = formOption.text_label;
     }
 
     let text_placeholder = "What are your thoughts?";
-    if (formOption && formOption.text_placeholder) {
+    if (formOption && formOption.text_placeholder !== undefined) {
       text_placeholder = formOption.text_placeholder;
     }
 
     let preview_button_text = "Preview";
-    if (formOption && formOption.preview_button_text) {
+    if (formOption && formOption.preview_button_text !== undefined) {
       preview_button_text = formOption.preview_button_text;
     }
 
     let post_button_text = "Comment";
-    if (formOption && formOption.post_button_text) {
+    if (formOption && formOption.post_button_text !== undefined) {
       post_button_text = formOption.post_button_text;
     }
 
@@ -417,6 +441,20 @@ class NostalgicBBS {
     const targetElement = document.getElementById(targetID);
     if (targetElement) {
       targetElement.innerHTML = html;
+
+      const escapeHTML = (src: string) => {
+        return src.replace(/[<>&"'`]/g, match => {
+          const escape: any = {
+            "<": "&lt;",
+            ">": "&gt;",
+            "&": "&amp;",
+            '"': "&quot;",
+            "'": "&#39;",
+            "`": "&#x60;"
+          };
+          return escape[match];
+        });
+      };
 
       const addClickEventListener = (type: string) => {
         let command = "";
@@ -449,14 +487,16 @@ class NostalgicBBS {
             const nameElements = targetElement.getElementsByClassName("nb-form-name");
             if (nameElements.length > 0) {
               const nameElement: any = nameElements[0];
-              name = encodeURIComponent(nameElement.value);
+              const value = (nameElement.value as string) || "";
+              name = encodeURIComponent(escapeHTML(value.trim()));
             }
 
             let text = "";
             const textElements = targetElement.getElementsByClassName("nb-form-text");
             if (textElements.length > 0) {
               const textElement: any = textElements[0];
-              text = encodeURIComponent(textElement.value);
+              const value = (textElement.value as string) || "";
+              text = encodeURIComponent(escapeHTML(value.trim()));
             }
 
             const res = await fetch(
@@ -583,7 +623,8 @@ class NostalgicBBS {
     post_format: string,
     dt_format: string,
     sort_by: string,
-    sort_order: string
+    sort_order: string,
+    auto_link: boolean
   ): string {
     let html = "";
 
@@ -609,7 +650,7 @@ class NostalgicBBS {
 
     _.forEach(sortedComments, comment => {
       let commentHTML = comment_format;
-      commentHTML = this.formatCommentHTML(commentHTML, comment, dt_format);
+      commentHTML = this.formatCommentHTML(commentHTML, comment, dt_format, auto_link);
       html += commentHTML;
 
       html += delimiter_format;
@@ -749,12 +790,21 @@ class NostalgicBBS {
     return dstHTML;
   }
 
-  private static formatCommentHTML(srcHTML: string, comment: Comment, dt_format: string): string {
+  private static formatCommentHTML(srcHTML: string, comment: Comment, dt_format: string, auto_link: boolean): string {
     let dstHTML = srcHTML;
+
+    const trip = comment.trip || "";
+
+    let text = comment.text;
+    if (auto_link) {
+      text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+    }
+    text = text.replace(/\n/g, "<br />");
 
     dstHTML = dstHTML.replace(/{id}/g, '<span class="nb-comment-id">' + comment.id + "</span>");
     dstHTML = dstHTML.replace(/{name}/g, '<span class="nb-comment-name">' + comment.name + "</span>");
-    dstHTML = dstHTML.replace(/{text}/g, '<span class="nb-comment-text">' + comment.text + "</span>");
+    dstHTML = dstHTML.replace(/{trip}/g, '<span class="nb-comment-trip">' + trip + "</span>");
+    dstHTML = dstHTML.replace(/{text}/g, '<span class="nb-comment-text">' + text + "</span>");
 
     const dt = new Date(comment.dt);
     dstHTML = dstHTML.replace(

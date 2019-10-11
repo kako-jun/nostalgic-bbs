@@ -9,22 +9,22 @@ div.nostalgic-bbs {
         margin-right: 1rem;
         // font-size: smaller;
 
-        .nb-threads-thread-id {
+        span.nb-threads-thread-id {
         }
 
-        .nb-threads-thread-title {
+        span.nb-threads-thread-title {
         }
 
-        .nb-threads-thread-comments-num {
+        span.nb-threads-thread-comments-num {
         }
 
-        .nb-threads-thread-invisible-num {
+        span.nb-threads-thread-invisible-num {
         }
 
-        .nb-threads-thread-created-at {
+        span.nb-threads-thread-created-at {
         }
 
-        .nb-threads-thread-updated-at {
+        span.nb-threads-thread-updated-at {
         }
       }
     }
@@ -50,22 +50,22 @@ div.nostalgic-bbs {
       }
 
       tr.nb-threads-thread {
-        .nb-threads-thread-id {
+        span.nb-threads-thread-id {
         }
 
-        .nb-threads-thread-title {
+        span.nb-threads-thread-title {
         }
 
-        .nb-threads-thread-comments-num {
+        span.nb-threads-thread-comments-num {
         }
 
-        .nb-threads-thread-invisible-num {
+        span.nb-threads-thread-invisible-num {
         }
 
-        .nb-threads-thread-created-at {
+        span.nb-threads-thread-created-at {
         }
 
-        .nb-threads-thread-updated-at {
+        span.nb-threads-thread-updated-at {
         }
       }
     }
@@ -79,22 +79,22 @@ div.nostalgic-bbs {
       // font-weight: 700;
     }
 
-    .nb-thread-id {
+    span.nb-thread-id {
     }
 
-    .nb-thread-title {
+    span.nb-thread-title {
     }
 
-    .nb-thread-comments-num {
+    span.nb-thread-comments-num {
     }
 
-    .nb-thread-invisible-num {
+    span.nb-thread-invisible-num {
     }
 
-    .nb-thread-created-at {
+    span.nb-thread-created-at {
     }
 
-    .nb-thread-updated-at {
+    span.nb-thread-updated-at {
     }
   }
 
@@ -135,6 +135,10 @@ div.nostalgic-bbs {
         .nb-comment-dt {
           margin-right: 5px;
         }
+
+        .nb-comment-trip {
+          margin-right: 5px;
+        }
       }
     }
 
@@ -153,24 +157,28 @@ div.nostalgic-bbs {
         margin-block-end: 0;
       }
 
-      .nb-comment-id {
+      span.nb-comment-id {
         margin-right: 5px;
       }
 
-      .nb-comment-name {
+      span.nb-comment-name {
         color: green;
         // font-size: 15px;
         margin-right: 5px;
       }
 
-      .nb-comment-text {
+      span.nb-comment-text {
         // font-size: 17px;
         font-size: 1.1rem;
         color: #333;
         overflow-wrap: break-word;
       }
 
-      .nb-comment-dt {
+      span.nb-comment-dt {
+        margin-right: 5px;
+      }
+
+      span.nb-comment-trip {
         margin-right: 5px;
       }
     }
@@ -183,25 +191,32 @@ div.nostalgic-bbs {
       text-align: right;
     }
 
-    .nb-form-name-label {
+    label.nb-form-title-label {
     }
 
-    .nb-form-name {
+    input.nb-form-title {
       width: 420px;
     }
 
-    .nb-form-text-label {
+    label.nb-form-name-label {
     }
 
-    .nb-form-text {
+    input.nb-form-name {
       width: 420px;
     }
 
-    .nb-form-preview-button {
+    label.nb-form-text-label {
+    }
+
+    textarea.nb-form-text {
+      width: 420px;
+    }
+
+    button.nb-form-preview-button {
       margin: 5px 0;
     }
 
-    .nb-form-post-button {
+    button.nb-form-post-button {
       margin: 5px 0;
     }
   }

@@ -44,7 +44,8 @@ const loadBBS = async () => {
       post_format: "",
       dt_format: "YYYY/MM/DD HH:mm",
       sort_by: "dt",
-      sort_order: "desc"
+      sort_order: "desc",
+      auto_link: true
     };
 
     window.NostalgicBBS.showCommentsFromThreads("nostalgic-bbs-sample8", threads, 4, commentsOption);
@@ -88,12 +89,12 @@ const loadBBS = async () => {
     "nostalgic-bbs-sample17",
     "http://localhost:42012/api",
     {
-      pre_format: "<hr>",
+      pre_format: "<p>スレッドを作成</p>",
       form_format: "<div>{title_label} {title}</div><div>{post_button}</div>",
-      post_format: "<hr>",
+      post_format: "",
       title_label: "タイトル:",
       title_placeholder: "",
-      post_button_text: "投稿"
+      post_button_text: "作成"
     },
     "nostalgic-bbs-sample6",
     {
