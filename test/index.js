@@ -1,9 +1,8 @@
 const loadBBS = async () => {
-  const threads = await window.NostalgicBBS.getThreads(
-    // "https://nostalgic-bbs.llll-ll.com/api/threads_and_comments"
-    // "https://nostalgic-bbs.llll-ll.com/api/threads_and_comments?id=test"
-    "http://localhost:42012/api"
-  );
+  // const url = "http://localhost:42012/api";
+  const url = "http://penguin.linux.test:42012/api";
+
+  const threads = await window.NostalgicBBS.getThreads(url, "test");
 
   if (threads) {
     window.NostalgicBBS.showThreads("nostalgic-bbs-sample1", threads, {});
@@ -11,14 +10,7 @@ const loadBBS = async () => {
     window.NostalgicBBS.showThreadFromThreads("nostalgic-bbs-sample2", threads, 0, {});
     window.NostalgicBBS.showCommentsFromThreads("nostalgic-bbs-sample3", threads, 0, {});
 
-    window.NostalgicBBS.showCommentForm(
-      "nostalgic-bbs-sample4",
-      "http://localhost:42012/api",
-      0,
-      {},
-      "nostalgic-bbs-sample5",
-      {}
-    );
+    window.NostalgicBBS.showCommentForm("nostalgic-bbs-sample4", url, "test", 0, {}, "nostalgic-bbs-sample5", {});
 
     window.NostalgicBBS.showThreads("nostalgic-bbs-sample6", threads, {
       pre_format:
@@ -32,7 +24,7 @@ const loadBBS = async () => {
       sort_order: "desc"
     });
 
-    window.NostalgicBBS.showThreadFromThreads("nostalgic-bbs-sample7", threads, 4, {
+    window.NostalgicBBS.showThreadFromThreads("nostalgic-bbs-sample7", threads, 1, {
       thread_format:
         '<h2 id="thread-{id_without_class}">{title} <span class="badge badge-pill badge-primary">{comments_num}</span></h2>'
     });
@@ -48,12 +40,13 @@ const loadBBS = async () => {
       auto_link: true
     };
 
-    window.NostalgicBBS.showCommentsFromThreads("nostalgic-bbs-sample8", threads, 4, commentsOption);
+    window.NostalgicBBS.showCommentsFromThreads("nostalgic-bbs-sample8", threads, 1, commentsOption);
 
     window.NostalgicBBS.showCommentForm(
       "nostalgic-bbs-sample9",
-      "http://localhost:42012/api",
-      4,
+      url,
+      "test",
+      1,
       {
         pre_format: "<hr>",
         form_format:
@@ -71,23 +64,19 @@ const loadBBS = async () => {
     );
   }
 
-  const thread = await window.NostalgicBBS.getThread("http://localhost:42012/api", 0);
-  if (thread) {
+  const thread = await window.NostalgicBBS.getThread(url, "test", 0);
+  if (thread && !thread.error) {
     console.log(thread);
     window.NostalgicBBS.showThread("nostalgic-bbs-sample11", thread);
     window.NostalgicBBS.showComments("nostalgic-bbs-sample12", thread);
   }
 
-  window.NostalgicBBS.showThreadForm(
-    "nostalgic-bbs-sample16",
-    "http://localhost:42012/api",
-    {},
-    "nostalgic-bbs-sample1"
-  );
+  window.NostalgicBBS.showThreadForm("nostalgic-bbs-sample16", url, "test", {}, "nostalgic-bbs-sample1");
 
   window.NostalgicBBS.showThreadForm(
     "nostalgic-bbs-sample17",
-    "http://localhost:42012/api",
+    url,
+    "test",
     {
       pre_format: "<p>スレッドを作成</p>",
       form_format: "<div>{title_label} {title}</div><div>{post_button}</div>",

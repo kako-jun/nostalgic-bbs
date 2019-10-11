@@ -64,8 +64,8 @@ class NostalgicBBS {
     // instance variables
   }
 
-  public static async getThreads(url: string) {
-    const res = await fetch(url + "/threads", {
+  public static async getThreads(url: string, id: string) {
+    const res = await fetch(url + "/threads?id=" + id, {
       mode: "cors"
     }).catch(() => null);
     if (res) {
@@ -78,8 +78,8 @@ class NostalgicBBS {
     return null;
   }
 
-  public static async getThread(url: string, threadID: number) {
-    const res = await fetch(url + "/threads/" + threadID, {
+  public static async getThread(url: string, id: string, threadID: number) {
+    const res = await fetch(url + "/threads/" + threadID + "?id=" + id, {
       mode: "cors"
     }).catch(() => null);
     if (res) {
@@ -93,6 +93,10 @@ class NostalgicBBS {
   }
 
   public static showThreads(targetID: string, threads: Array<ThreadForUI>, option: Option): void {
+    if (!threads) {
+      return;
+    }
+
     let pre_format = "<ul>";
     if (option && option.pre_format !== undefined) {
       pre_format = option.pre_format;
@@ -147,6 +151,10 @@ class NostalgicBBS {
   }
 
   public static showThread(targetID: string, thread: ThreadForUI, option: Option): void {
+    if (!thread) {
+      return;
+    }
+
     let pre_format = "";
     if (option && option.pre_format !== undefined) {
       pre_format = option.pre_format;
@@ -191,6 +199,10 @@ class NostalgicBBS {
   }
 
   public static showComments(targetID: string, thread: ThreadForUI, option: Option): void {
+    if (!thread) {
+      return;
+    }
+
     let pre_format = "<ul>";
     if (option && option.pre_format !== undefined) {
       pre_format = option.pre_format;
@@ -267,6 +279,7 @@ class NostalgicBBS {
   public static showThreadForm(
     targetID: string,
     url: string,
+    id: string,
     formOption: Option,
     updateTargetID: string,
     threadsOption: Option
@@ -355,7 +368,7 @@ class NostalgicBBS {
               title = encodeURIComponent(escapeHTML(value.trim()));
             }
 
-            const res = await fetch(url + "/threads/" + command + "?title=" + title, {
+            const res = await fetch(url + "/threads/" + command + "?id=" + id + "&title=" + title, {
               mode: "cors"
             }).catch(() => null);
             if (res) {
@@ -376,6 +389,7 @@ class NostalgicBBS {
   public static showCommentForm(
     targetID: string,
     url: string,
+    id: string,
     threadID: number,
     formOption: Option,
     updateTargetID: string,
@@ -500,7 +514,7 @@ class NostalgicBBS {
             }
 
             const res = await fetch(
-              url + "/threads/" + threadID + "/comments/" + command + "?name=" + name + "&text=" + text,
+              url + "/threads/" + threadID + "/comments/" + command + "?id=" + id + "&name=" + name + "&text=" + text,
               {
                 mode: "cors"
               }
@@ -864,12 +878,12 @@ class NostalgicBBS {
   }
 }
 
-export async function getThreads(url: string) {
-  return await NostalgicBBS.getThreads(url);
+export async function getThreads(url: string, id: string) {
+  return await NostalgicBBS.getThreads(url, id);
 }
 
-export async function getThread(url: string, threadID: number) {
-  return await NostalgicBBS.getThread(url, threadID);
+export async function getThread(url: string, id: string, threadID: number) {
+  return await NostalgicBBS.getThread(url, id, threadID);
 }
 
 export function showThreads(targetID: string, threads: Array<ThreadForUI>, option: Option): void {
@@ -905,22 +919,24 @@ export function showCommentsFromThreads(
 export function showThreadForm(
   targetID: string,
   url: string,
+  id: string,
   formOption: Option,
   updateTargetID: string,
   threadsOption: Option
 ): void {
-  NostalgicBBS.showThreadForm(targetID, url, formOption, updateTargetID, threadsOption);
+  NostalgicBBS.showThreadForm(targetID, url, id, formOption, updateTargetID, threadsOption);
 }
 
 export function showCommentForm(
   targetID: string,
   url: string,
+  id: string,
   threadID: number,
   formOption: Option,
   updateTargetID: string,
   commentsOption: Option
 ): void {
-  NostalgicBBS.showCommentForm(targetID, url, threadID, formOption, updateTargetID, commentsOption);
+  NostalgicBBS.showCommentForm(targetID, url, id, threadID, formOption, updateTargetID, commentsOption);
 }
 
 export default NostalgicBBS;
