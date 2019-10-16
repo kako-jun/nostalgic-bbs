@@ -65,7 +65,7 @@ class NostalgicBBS {
   }
 
   public static async getThreads(url: string, id: string) {
-    const res = await fetch(url + "/threads?id=" + id, {
+    const res = await fetch(url + "/api/threads?id=" + id, {
       mode: "cors"
     }).catch(() => null);
     if (res) {
@@ -79,7 +79,7 @@ class NostalgicBBS {
   }
 
   public static async getThread(url: string, id: string, threadID: number) {
-    const res = await fetch(url + "/threads/" + threadID + "?id=" + id, {
+    const res = await fetch(url + "/api/threads/" + threadID + "?id=" + id, {
       mode: "cors"
     }).catch(() => null);
     if (res) {
@@ -183,21 +183,6 @@ class NostalgicBBS {
     }
   }
 
-  public static showThreadFromThreads(
-    targetID: string,
-    threads: Array<ThreadForUI>,
-    threadID: number,
-    option: Option
-  ): void {
-    const thread = _.find(threads, thread => {
-      return thread.id === threadID;
-    });
-
-    if (thread) {
-      this.showThread(targetID, thread, option);
-    }
-  }
-
   public static showComments(targetID: string, thread: ThreadForUI, option: Option): void {
     if (!thread) {
       return;
@@ -208,7 +193,7 @@ class NostalgicBBS {
       pre_format = option.pre_format;
     }
 
-    let comment_format = '<li class="nb-comment">{id}{name}{dt}ID:{trip}<p class="text">{text}</p></li>';
+    let comment_format = '<li class="nb-comment">{id}{name}{dt}{trip}<p class="text">{text}</p></li>';
     if (option && option.comment_format !== undefined) {
       comment_format = option.comment_format;
     }
@@ -258,21 +243,6 @@ class NostalgicBBS {
     const targetElement = document.getElementById(targetID);
     if (targetElement) {
       targetElement.innerHTML = html;
-    }
-  }
-
-  public static showCommentsFromThreads(
-    targetID: string,
-    threads: Array<ThreadForUI>,
-    threadID: number,
-    option: Option
-  ): void {
-    const thread = _.find(threads, thread => {
-      return thread.id === threadID;
-    });
-
-    if (thread) {
-      this.showComments(targetID, thread, option);
     }
   }
 
@@ -368,7 +338,7 @@ class NostalgicBBS {
               title = encodeURIComponent(escapeHTML(value.trim()));
             }
 
-            const res = await fetch(url + "/threads/" + command + "?id=" + id + "&title=" + title, {
+            const res = await fetch(url + "/api/threads/" + command + "?id=" + id + "&title=" + title, {
               mode: "cors"
             }).catch(() => null);
             if (res) {
@@ -514,7 +484,17 @@ class NostalgicBBS {
             }
 
             const res = await fetch(
-              url + "/threads/" + threadID + "/comments/" + command + "?id=" + id + "&name=" + name + "&text=" + text,
+              url +
+                "/api/threads/" +
+                threadID +
+                "/comments/" +
+                command +
+                "?id=" +
+                id +
+                "&name=" +
+                name +
+                "&text=" +
+                text,
               {
                 mode: "cors"
               }
@@ -817,7 +797,7 @@ class NostalgicBBS {
 
     dstHTML = dstHTML.replace(/{id}/g, '<span class="nb-comment-id">' + comment.id + "</span>");
     dstHTML = dstHTML.replace(/{name}/g, '<span class="nb-comment-name">' + comment.name + "</span>");
-    dstHTML = dstHTML.replace(/{trip}/g, '<span class="nb-comment-trip">' + trip + "</span>");
+    dstHTML = dstHTML.replace(/{trip}/g, '<span class="nb-comment-trip">ID:' + trip + "</span>");
     dstHTML = dstHTML.replace(/{text}/g, '<span class="nb-comment-text">' + text + "</span>");
 
     const dt = new Date(comment.dt);
@@ -894,26 +874,8 @@ export function showThread(targetID: string, thread: ThreadForUI, option: Option
   NostalgicBBS.showThread(targetID, thread, option);
 }
 
-export function showThreadFromThreads(
-  targetID: string,
-  threads: Array<ThreadForUI>,
-  threadID: number,
-  option: Option
-): void {
-  NostalgicBBS.showThreadFromThreads(targetID, threads, threadID, option);
-}
-
 export function showComments(targetID: string, thread: ThreadForUI, option: Option): void {
   NostalgicBBS.showComments(targetID, thread, option);
-}
-
-export function showCommentsFromThreads(
-  targetID: string,
-  threads: Array<ThreadForUI>,
-  threadID: number,
-  option: Option
-): void {
-  NostalgicBBS.showCommentsFromThreads(targetID, threads, threadID, option);
 }
 
 export function showThreadForm(

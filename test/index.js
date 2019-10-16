@@ -1,16 +1,12 @@
 const loadBBS = async () => {
-  // const url = "http://localhost:42012/api";
-  const url = "http://penguin.linux.test:42012/api";
+  // const url = "http://localhost:42012";
+  const url = "http://penguin.linux.test:42012";
+  // const url = "https://nostalgic-bbs.llll-ll.com";
 
   const threads = await window.NostalgicBBS.getThreads(url, "test");
 
   if (threads) {
     window.NostalgicBBS.showThreads("nostalgic-bbs-sample1", threads, {});
-
-    window.NostalgicBBS.showThreadFromThreads("nostalgic-bbs-sample2", threads, 0, {});
-    window.NostalgicBBS.showCommentsFromThreads("nostalgic-bbs-sample3", threads, 0, {});
-
-    window.NostalgicBBS.showCommentForm("nostalgic-bbs-sample4", url, "test", 0, {}, "nostalgic-bbs-sample5", {});
 
     window.NostalgicBBS.showThreads("nostalgic-bbs-sample6", threads, {
       pre_format:
@@ -23,8 +19,19 @@ const loadBBS = async () => {
       sort_by: "created_at",
       sort_order: "desc"
     });
+  }
 
-    window.NostalgicBBS.showThreadFromThreads("nostalgic-bbs-sample7", threads, 1, {
+  const thread = await window.NostalgicBBS.getThread(url, "test", 0);
+  if (thread && !thread.error) {
+    window.NostalgicBBS.showThread("nostalgic-bbs-sample2", thread, {});
+    window.NostalgicBBS.showComments("nostalgic-bbs-sample3", thread, {});
+
+    window.NostalgicBBS.showCommentForm("nostalgic-bbs-sample4", url, "test", 0, {}, "nostalgic-bbs-sample5", {});
+  }
+
+  const thread = await window.NostalgicBBS.getThread(url, "test", 1);
+  if (thread && !thread.error) {
+    window.NostalgicBBS.showThread("nostalgic-bbs-sample7", thread, {
       thread_format:
         '<h2 id="thread-{id_without_class}">{title} <span class="badge badge-pill badge-primary">{comments_num}</span></h2>'
     });
@@ -40,7 +47,7 @@ const loadBBS = async () => {
       auto_link: true
     };
 
-    window.NostalgicBBS.showCommentsFromThreads("nostalgic-bbs-sample8", threads, 1, commentsOption);
+    window.NostalgicBBS.showComments("nostalgic-bbs-sample8", thread, commentsOption);
 
     window.NostalgicBBS.showCommentForm(
       "nostalgic-bbs-sample9",
