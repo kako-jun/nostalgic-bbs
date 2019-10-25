@@ -1,6 +1,6 @@
 const loadBBS = async () => {
-  // const url = "http://localhost:42012";
-  const url = "http://penguin.linux.test:42012";
+  const url = "http://localhost:42012";
+  // const url = "http://penguin.linux.test:42012";
   // const url = "https://nostalgic-bbs.llll-ll.com";
 
   const threads = await window.NostalgicBBS.getThreads(url, "test");
@@ -21,7 +21,7 @@ const loadBBS = async () => {
     });
   }
 
-  const thread = await window.NostalgicBBS.getThread(url, "test", 0);
+  let thread = await window.NostalgicBBS.getThread(url, "test", 0);
   if (thread && !thread.error) {
     window.NostalgicBBS.showThread("nostalgic-bbs-sample2", thread, {});
     window.NostalgicBBS.showComments("nostalgic-bbs-sample3", thread, {});
@@ -29,7 +29,7 @@ const loadBBS = async () => {
     window.NostalgicBBS.showCommentForm("nostalgic-bbs-sample4", url, "test", 0, {}, "nostalgic-bbs-sample5", {});
   }
 
-  const thread = await window.NostalgicBBS.getThread(url, "test", 1);
+  thread = await window.NostalgicBBS.getThread(url, "test", 1);
   if (thread && !thread.error) {
     window.NostalgicBBS.showThread("nostalgic-bbs-sample7", thread, {
       thread_format:
@@ -71,7 +71,7 @@ const loadBBS = async () => {
     );
   }
 
-  const thread = await window.NostalgicBBS.getThread(url, "test", 0);
+  thread = await window.NostalgicBBS.getThread(url, "test", 0);
   if (thread && !thread.error) {
     console.log(thread);
     window.NostalgicBBS.showThread("nostalgic-bbs-sample11", thread);
